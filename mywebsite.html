@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dino Game</title>
+  <style>
+    body { text-align: center; font-family: Arial, sans-serif; }
+    canvas { border: 1px solid black; display: block; margin: 20px auto; }
+    .ad { margin: 10px auto; width: 90%; max-width: 300px; height: 100px; background-color: #ddd; text-align: center; line-height: 100px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>Play the Dino Game!</h1>
+  <div class="ad">Your Ad Here</div>
+  <canvas id="gameCanvas" width="600" height="150"></canvas>
+  <div class="ad">Your Ad Here</div>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    let dino = { x: 50, y: 100, width: 20, height: 20, jump: false, velocityY: 0 };
+    let obstacle = { x: 600, y: 100, width: 20, height: 20 };
+    let gravity = 0.5;
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "black";
+      ctx.fillRect(dino.x, dino.y, dino.width, dino.height); // Dino
+      ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height); // Obstacle
+    }
+
+    function update() {
+      if (dino.jump) {
+        dino.velocityY -= gravity;
+        dino.y -= dino.velocityY;
+        if (dino.y >= 100) {
+          dino.y = 100;
+          dino.jump = false;
+          dino.velocityY = 0;
+        }
+      }
+      obstacle.x -= 5;
+      if (obstacle.x < -20) obstacle.x = canvas.width;
+
+      if (dino.x < obstacle.x + obstacle.width &&
+          dino.x + dino.width > obstacle.x &&
+          dino.y < obstacle.y + obstacle.height &&
+          dino.y + dino.height > obstacle.y) {
+        alert("Game Over!");
+        obstacle.x = canvas.width;
+      }
+    }
+
+    function gameLoop() {
+      draw();
+      update();
+      requestAnimationFrame(gameLoop);
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && dino.y === 100) {
+        dino.jump = true;
+        dino.velocityY = 8;
+      }
+    });
+
+    gameLoop();
+  </script>
+</body>
+</html>
